@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="js/jquery-3.3.1.min.js" ></script>
+
+</head>
+
+<body>
+
+  <img id="lock" src="images/noun_Lock_100423.png" alt="Locked"/>
+  <BR />
+
+  <script>
+  $(document).ready(function(){
+    console.log("reay");
+
+    $("#solve").click(function(){
+      console.log("solving");
+      solve();
+    });
+
+
+    function loadUnlockImage(){
+      $("#lock").attr("src", "images/noun_Unlock_100425.png");
+    }
+    function loadLockImage(){
+      $("#lock").attr("src", "images/noun_Lock_100423.png");
+    }
+
+    var currentTimeout;
+    var payload = "";
+    var recording = false;
+    $(document).keydown(function( event ) {
+      event.preventDefault();//prevents default actions
+      console.log(event.key);
+      if (event.key == "%" /*53*/) { //when a is pressed, start recording and move to second page
+        // note: this will change when we use a real card.
+        recording = true;
+        console.log("start recording");
+        clearTimeout(currentTimeout); // make sure there aren't any other timeouts current in operation
+        currentTimeout = setTimeout(function(){
+          if(recording){
+            recording = false;
+            payload = "";
+            currentUser= false;
+          }
+        },9000) //wait nine seconds on this page: should probs be changed to wait for data
+      } else if (recording && event.key == "?" /*191*/){ //when b is pressed, stop recording, update card, reset
+        console.log("stop recording");
+        console.log("card id is " + payload);
+        recording = false;
+
+        // do stuff here
+        if(payload.trim() == "844550389Shift"){
+          loadUnlockImage();
+        }else{
+          console.log("nope");
+        }
+
+        payload = "";
+        clearTimeout(currentTimeout);
+        currentTimeout = setTimeout(function(){
+          loadLockImage(false);
+        }, 30000); //wait 30 seconds on this page then go back to the beginning
+      } else if (recording){
+        payload += event.key; //add the keys that are pressed between "%" and "?"
+      } else {
+        console.log("nope");
+        return false;
+      }
+    });
+
+  });
+
+
+  </script>
+</body>
+
+
+</html>
